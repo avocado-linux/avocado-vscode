@@ -1,0 +1,172 @@
+{
+  "name": "avocado-devtools",
+  "displayName": "Avocado DevTools",
+  "description": "Development tools for Avocado Linux builds - browse state volumes, run SDK commands, and get IntelliSense for avocado.yaml",
+  "version": "0.1.0",
+  "publisher": "avocado-linux",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avocado-linux/avocado-vscode"
+  },
+  "icon": "resources/icons/avocado.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "avocado",
+    "linux",
+    "embedded",
+    "containers",
+    "docker"
+  ],
+  "activationEvents": [
+    "workspaceContains:avocado.yaml",
+    "workspaceContains:avocado.yml"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "avocado-explorer",
+          "title": "Avocado",
+          "icon": "resources/icons/avocado.svg"
+        }
+      ]
+    },
+    "views": {
+      "avocado-explorer": [
+        {
+          "id": "avocadoVolumeExplorer",
+          "name": "Avocado State",
+          "contextualTitle": "Avocado State"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "avocado.selectTarget",
+        "title": "Avocado: Select Target",
+        "icon": "$(target)"
+      },
+      {
+        "command": "avocado.install",
+        "title": "Avocado: Install SDK and Dependencies",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "avocado.build",
+        "title": "Avocado: Build",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "avocado.sdkShell",
+        "title": "Avocado: Open SDK Shell",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "avocado.clean",
+        "title": "Avocado: Clean",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "avocado.refresh",
+        "title": "Avocado: Refresh Volume Explorer",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "avocado.copyPath",
+        "title": "Copy Path",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "avocado.openFile",
+        "title": "Open File",
+        "icon": "$(go-to-file)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "avocado.refresh",
+          "when": "view == avocadoVolumeExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "avocado.copyPath",
+          "when": "view == avocadoVolumeExplorer",
+          "group": "inline"
+        },
+        {
+          "command": "avocado.openFile",
+          "when": "view == avocadoVolumeExplorer && viewItem == file",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "avocado.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "avocado.openFile",
+          "when": "false"
+        }
+      ]
+    },
+    "terminal": {
+      "profiles": [
+        {
+          "id": "avocado.sdkTerminal",
+          "title": "Avocado SDK"
+        }
+      ]
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          "avocado.yaml",
+          "avocado.yml"
+        ],
+        "url": "./schemas/avocado-config.schema.json"
+      }
+    ],
+    "yamlValidation": [
+      {
+        "fileMatch": [
+          "avocado.yaml",
+          "avocado.yml"
+        ],
+        "url": "./schemas/avocado-config.schema.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "watch": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.19.8",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "yaml": "^2.3.4"
+  }
+}

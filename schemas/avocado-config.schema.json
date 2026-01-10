@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://avocadolinux.org/schemas/avocado-config.schema.json",
+  "title": "Avocado Configuration",
+  "description": "Configuration schema for avocado.yaml files",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "string",
+      "description": "Default target architecture (e.g., 'qemux86-64', 'raspberrypi-5')"
+    },
+    "sdk": {
+      "type": "object",
+      "description": "SDK configuration",
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Docker image for the SDK container (e.g., 'ghcr.io/avocado-linux/sdk:latest')"
+        },
+        "packages": {
+          "type": "array",
+          "description": "SDK packages to install",
+          "items": {
+            "type": "string"
+          }
+        },
+        "repo_url": {
+          "type": "string",
+          "description": "Override the default repository URL"
+        },
+        "repo_release": {
+          "type": "string",
+          "description": "Override the default repository release"
+        },
+        "container_args": {
+          "type": "array",
+          "description": "Additional arguments to pass to the container runtime",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compile": {
+          "type": "array",
+          "description": "Compile scripts to run in the SDK",
+          "items": {
+            "$ref": "#/definitions/compileSection"
+          }
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Extension definitions",
+      "additionalProperties": {
+        "$ref": "#/definitions/extension"
+      }
+    },
+    "runtimes": {
+      "type": "object",
+      "description": "Runtime definitions",
+      "additionalProperties": {
+        "$ref": "#/definitions/runtime"
+      }
+    },
+    "targets": {
+      "type": "object",
+      "description": "Target-specific configuration overrides",
+      "additionalProperties": {
+        "$ref": "#/definitions/targetOverride"
+      }
+    },
+    "signing_keys": {
+      "type": "object",
+      "description": "Mapping of signing key names to key IDs",
+      "additionalProperties": {
+        "type": "string",
+        "description": "Key ID for the signing key"
+      }
+    },
+    "src_dir": {
+      "type": "string",
+      "description": "Source directory path (relative to config file)"
+    }
+  },
+  "definitions": {
+    "extension": {
+      "type": "object",
+      "description": "Extension configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["sysext", "confext"],
+          "description": "Type of extension (sysext for system extensions, confext for configuration extensions)"
+        },
+        "packages": {
+          "type": "array",
+          "description": "Packages to install in the extension sysroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "install_script": {
+          "type": "string",
+          "description": "Custom install script to run after package installation"
+        },
+        "build_script": {
+          "type": "string",
+          "description": "Custom build script to run when building the extension"
+        },
+        "source": {
+          "type": "object",
+          "description": "Remote source for the extension",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["git", "repo", "path"],
+              "description": "Source type"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL for git or repo source"
+            },
+            "path": {
+              "type": "string",
+              "description": "Local path for path source"
+            },
+            "branch": {
+              "type": "string",
+              "description": "Git branch to checkout"
+            },
+            "commit": {
+              "type": "string",
+              "description": "Git commit SHA to checkout"
+            }
+          }
+        },
+        "include": {
+          "type": "array",
+          "description": "Other extensions to include in this extension",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "description": "Runtime configuration",
+      "properties": {
+        "packages": {
+          "type": "array",
+          "description": "Packages to install in the runtime installroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "description": "Extensions to include in the runtime",
+          "items": {
+            "type": "string"
+          }
+        },
+        "build_script": {
+          "type": "string",
+          "description": "Custom build script to run when building the runtime"
+        },
+        "signing": {
+          "type": "object",
+          "description": "Image signing configuration",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Signing key name (must be defined in signing_keys)"
+            },
+            "checksum_algorithm": {
+              "type": "string",
+              "enum": ["sha256", "sha512", "blake3"],
+              "description": "Checksum algorithm for signing"
+            }
+          }
+        },
+        "provision": {
+          "type": "object",
+          "description": "Provisioning configuration",
+          "properties": {
+            "script": {
+              "type": "string",
+              "description": "Provisioning script to run"
+            },
+            "profiles": {
+              "type": "object",
+              "description": "Named provision profiles",
+              "additionalProperties": {
+                "type": "object",
+                "description": "Profile-specific settings"
+              }
+            }
+          }
+        }
+      }
+    },
+    "targetOverride": {
+      "type": "object",
+      "description": "Target-specific configuration overrides",
+      "properties": {
+        "sdk": {
+          "$ref": "#/properties/sdk"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/extension"
+          }
+        },
+        "runtimes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/runtime"
+          }
+        }
+      }
+    },
+    "compileSection": {
+      "type": "object",
+      "description": "Compile script section",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the compile section"
+        },
+        "script": {
+          "type": "string",
+          "description": "Script to run"
+        },
+        "clean_script": {
+          "type": "string",
+          "description": "Script to run for cleaning"
+        },
+        "stamp": {
+          "type": "string",
+          "description": "Stamp file pattern for tracking completion"
+        }
+      },
+      "required": ["name"]
+    }
+  }
+}
