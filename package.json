@@ -1,9 +1,9 @@
 {
-  "name": "avocado-devtools",
-  "displayName": "Avocado DevTools",
+  "name": "avocado-linux-devtools",
+  "displayName": "Avocado Linux DevTools",
   "description": "Development tools for Avocado Linux builds - browse state volumes, run SDK commands, and get IntelliSense for avocado.yaml",
   "version": "0.1.0",
-  "publisher": "avocado-linux",
+  "publisher": "peridio",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
